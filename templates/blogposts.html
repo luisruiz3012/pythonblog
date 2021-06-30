@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blogposts</title>
+    <!-- CSS -->
+    <style>
+        .post {
+            background-color: rgba(183, 255, 231, 0.557);
+            border-radius: 20px
+        }
+    </style>
+    <!-- BOOTSTRAP -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg p-2 navbar-light bg-dark">
+        <a class="navbar-brand text-light" href="/">Pythonblog</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link text-light" href="/">Home <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-light" href="/about">About</a>
+              </li>
+            </ul>
+          </div>
+      </nav>
+      <main class="container">
+          <section class="container mt-4">
+              <div class="row">
+                  <div class="col-md-2">
+                    <h1>Blogposts</h1>
+                  </div>
+                  {% if posts %}
+                    <div class="col-md-2 ml-auto">
+                        <a href="/blogposts/create_blogpost" class="btn btn-primary">Add a post</a>
+                    </div>
+                  {% endif %}
+              </div>
+              <hr>
+          </section>
+          <section class="container mt-4 posts">
+              {% if not posts %}
+                <h2 class="text-center mt-5 pt-5 text-muted">Page is empty</h2>
+                <p class="text-center mt-1 text-muted">Lets create your first blog!</p>
+                
+                <div class="text-center mt-4">
+                    <a href="/blogposts/create_blogpost" class="btn btn-primary">Add a post</a>
+                </div>
+              {% endif %}
+              {% if posts %}
+              {% for post in posts %}
+              <article class="post mt-4 mb-4 p-4">
+                  <h2 class="mb-2">{{post.title}}</h2>
+                  <p>{{post.text[0:250]}}</p>
+                  <p>{{post.date}}</p>
+                  <div class="row">
+                      <div class="col-md-2">
+                          <a href="/blogposts/{{post._id}}" class="btn btn-primary">Read more</a>
+                      </div>
+                  </div>
+              </article>
+            {% endfor %}
+              {% endif %}
+          </section>
+      </main>
+</body>
+</html>

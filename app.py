@@ -12,6 +12,16 @@ CORS(app)
 # Routes
 
 
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
+
 @app.route('/blogposts', methods=['GET'])
 def blogposts():
     posts = []
@@ -22,54 +32,63 @@ def blogposts():
             'text': post['text'],
             'date': post['date']
         })
-    return jsonify({'posts': posts})
+    return render_template('blogposts.html', posts=posts)
+
+
+@app.route('/blogposts/create_blogpost', methods=['GET'])
+def create_blogpost():
+    return render_template('create.html')
 
 
 @app.route('/blogposts/create', methods=['POST'])
 def create_blog():
-    title = request.json['title']
-    text = request.json['text']
-    date = request.json['date']
+    title = request.form['title']
+    text = request.form['text']
+    date = request.form['date']
 
-    db.insert_one({
-        'title': title,
-        'text': text,
-        'date': date
-    })
+    if request.method == 'POST':
+        db.insert_one({
+            'title': title,
+            'text': text,
+            'date': date
+        })
 
-    return jsonify({'Message': 'Post created successfully'})
+        return redirect(url_for('blogposts'))
 
 
 @app.route('/blogposts/<id>', methods=['GET'])
 def get_blog(id):
     post = db.find_one({'_id': ObjectId(id)})
-    return jsonify({
-        '_id': str(ObjectId(id)),
-        'title': post['title'],
-        'text': post['text'],
-        'date': post['date']
-    })
+    return render_template('post.html', post=post)
 
 
-@app.route('/blogposts/update/<id>', methods=['PUT'])
+@app.route('/blogposts/update_post/<id>', methods=['GET'])
+def update_post(id):
+    post = db.find_one({'_id': ObjectId(id)})
+    return render_template('update.html', post=post)
+
+
+@app.route('/blogposts/update/<id>', methods=['POST'])
 def update_blog(id):
-    title = request.json['title']
-    text = request.json['text']
-    date = request.json['date']
+    title = request.form['title']
+    text = request.form['text']
+    date = request.form['date']
 
-    db.update_one({'_id': ObjectId(id)}, {'$set': {
-        'title': title,
-        'text': text,
-        'date': date
-    }})
+    if request.method == "POST":
+        db.update_one({'_id': ObjectId(id)}, {'$set': {
+            'title': title,
+            'text': text,
+            'date': date
+        }})
 
-    return jsonify({'Message': 'Post updated successfully'})
+        return redirect(url_for('blogposts'))
 
 
-@app.route('/blogposts/delete/<id>', methods=['DELETE'])
+@app.route('/blogposts/delete/<id>', methods=['POST'])
 def delete_blog(id):
-    db.remove({'_id': ObjectId(id)})
-    return jsonify({'Message': 'Post deleted successfully'})
+    if request.method == "POST":
+        db.remove({'_id': ObjectId(id)})
+        return redirect(url_for('blogposts'))
 
 
 if __name__ == '__main__':
